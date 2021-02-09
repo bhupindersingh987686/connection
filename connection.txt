@@ -1,0 +1,49 @@
+const MongoClient = require( 'mongodb' ).MongoClient;
+
+class DBConnection 
+{
+    static dbCon = null;
+    static flag = 0;
+    static url = "mongodb://localhost:27017";
+    static client = null;
+    static db = null;
+
+    constructor() 
+    {
+        throw new Error('Cannot create instance');
+    }
+
+
+    static async getConnection(stage) 
+    {
+
+        if(!DBConnection.dbCon) {
+            DBConnection.flag++;
+            console.log(DBConnection.flag);
+            try 
+            {
+                DBConnection.dbCon = await MongoClient.connect(DBConnection.url, { useNewUrlParser: true });
+
+                
+                if(stage === "workspace")
+                {
+                    DBConnection.db = DBConnection.dbCon.db("vcomply");
+                }
+                else if(stage === "production")
+                {
+
+                }
+
+            } catch(err) {
+                console.log('CONNECTION ISSUE', err);
+            }
+
+
+        }
+        // return DBConnection.dbCon;
+        return DBConnection.db;
+    }
+}
+
+
+module.exports = DBConnection;
